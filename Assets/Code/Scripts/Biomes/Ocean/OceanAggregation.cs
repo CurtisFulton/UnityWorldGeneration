@@ -18,6 +18,9 @@ public class OceanAggregation : IBiomeAggregation
 
     public IBiomeType GetBiome(float height, float temp, float moisture)
     {
+        if (height > 0.41f && temp > 0.315f)
+            return Beach;
+
         if (height > 0.35f)
             return ShallowOcean;
 

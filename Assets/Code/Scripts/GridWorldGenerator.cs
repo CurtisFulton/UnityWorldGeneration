@@ -63,7 +63,7 @@ public class GridWorldGenerator : IWorldGenerator
             for (int y = 0; y < size; y++) {
                 MapTile tile = _allTiles[x][y];
 
-                var heightModifier = Mathf.Lerp(0.2f, 1.2f, tile.Height);
+                var heightModifier = Mathf.Lerp(0.25f, 1.25f, tile.Height);
 
                 tile.Height = Mathf.InverseLerp(minHeight, maxHeight, tile.Height);
                 tile.Temperature = Mathf.InverseLerp(minTemp, maxTemp, tile.Temperature) * heightModifier;
@@ -125,9 +125,9 @@ public class GridWorldGenerator : IWorldGenerator
         noise.SetInterp(FastNoise.Interp.Quintic);
 
         noise.SetFrequency(1f / (_mapSize * 0.4f));
-        noise.SetFractalLacunarity(2);
-        noise.SetFractalGain(0.55f);
-        noise.SetFractalOctaves(10);
+        noise.SetFractalLacunarity(2.2f);
+        noise.SetFractalGain(0.5f);
+        noise.SetFractalOctaves(20);
 
         return noise;
     }
@@ -142,9 +142,9 @@ public class GridWorldGenerator : IWorldGenerator
 
         noise.SetInterp(FastNoise.Interp.Quintic);
 
-        noise.SetFrequency(1f / (_mapSize * 3f));
-        noise.SetFractalLacunarity(1f);
-        noise.SetFractalGain(0.2f);
+        noise.SetFrequency(1f / (_mapSize * 1.5f));
+        noise.SetFractalLacunarity(1.15f);
+        noise.SetFractalGain(0.3f);
         noise.SetFractalOctaves(5);
 
         return noise;
@@ -160,9 +160,9 @@ public class GridWorldGenerator : IWorldGenerator
 
         noise.SetInterp(FastNoise.Interp.Quintic);
 
-        noise.SetFrequency(1f / (_mapSize * 1.5f));
-        noise.SetFractalLacunarity(2f);
-        noise.SetFractalGain(0.5f);
+        noise.SetFrequency(1f / (_mapSize * 0.5f));
+        noise.SetFractalLacunarity(3f);
+        noise.SetFractalGain(0.55f);
         noise.SetFractalOctaves(5);
 
         return noise;

@@ -9,7 +9,11 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private int _worldSize;
 
-    [SerializeField] private Renderer _renderer;
+    [SerializeField] private Renderer _colourMap;
+    [SerializeField] private Renderer _heightMap;
+    [SerializeField] private Renderer _tempMap;
+    [SerializeField] private Renderer _moistureMap;
+
     [SerializeField] private Terrain _terrain;
 
     private float max = int.MinValue;
@@ -23,25 +27,49 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        Texture2D worldTexture = new Texture2D(_worldSize, _worldSize);
+        Texture2D colourTexture = new Texture2D(_worldSize, _worldSize);
+        Texture2D heightTexture = new Texture2D(_worldSize, _worldSize);
+        Texture2D tempTexture = new Texture2D(_worldSize, _worldSize);
+        Texture2D moistureTexture = new Texture2D(_worldSize, _worldSize);
 
-        var colors = new Color[_worldSize * _worldSize];
+        var worldColours = new Color[_worldSize * _worldSize];
+        var heightMapColours = new Color[_worldSize * _worldSize];
+        var tempColours = new Color[_worldSize * _worldSize];
+        var moistureColours = new Color[_worldSize * _worldSize];
 
         for (int x = 0; x < _worldSize; x++) {
             for (int y = 0; y < _worldSize; y++) {
                 var i = (x * _worldSize) + y;
                 var colour = GetMapColor(x, y);
-                //var colour = GetMoistureTexture(x, y);
+                worldColours[i] = colour;
 
-                colors[i] = colour;
+                colour = GetHeightMap(x, y);
+                heightMapColours[i] = colour;
+
+                colour = GetTemperatureMap(x, y);
+                tempColours[i] = colour;
+
+                colour = GetMoistureMap(x, y);
+                moistureColours[i] = colour;
             }
         }
 
-        worldTexture.SetPixels(colors);
+        heightTexture.SetPixels(heightMapColours);
+        heightTexture.Apply();
+        _heightMap.material.mainTexture = heightTexture;
 
-        worldTexture.Apply();
+        tempTexture.SetPixels(tempColours);
+        tempTexture.Apply();
+        _tempMap.material.mainTexture = tempTexture;
 
-        _renderer.material.mainTexture = worldTexture;
+        moistureTexture.SetPixels(moistureColours);
+        moistureTexture.Apply();
+        _moistureMap.material.mainTexture = moistureTexture;
+        
+        colourTexture.SetPixels(worldColours);
+        colourTexture.Apply();
+        _colourMap.material.mainTexture = colourTexture;
+
 
         var heights = new float[_worldSize, _worldSize];
 
@@ -50,11 +78,11 @@ public class GameController : MonoBehaviour
         _terrain.terrainData.size = new Vector3(_worldSize, 35, _worldSize);
         _terrain.basemapDistance = Mathf.Infinity;
 
-        var texture = new SplatPrototype[] { new SplatPrototype() } ;
-        texture[0].texture = worldTexture;
-        texture[0].tileSize = new Vector2(_worldSize, _worldSize);
+        var splatTexture = new SplatPrototype[] { new SplatPrototype() } ;
+        splatTexture[0].texture = colourTexture;
+        splatTexture[0].tileSize = new Vector2(_worldSize, _worldSize);
 
-        _terrain.terrainData.splatPrototypes = texture;
+        _terrain.terrainData.splatPrototypes = splatTexture;
 
         for (int x = 0; x < _worldSize; x++) {
             for (int y = 0; y < _worldSize; y++) {
@@ -96,7 +124,7 @@ public class GameController : MonoBehaviour
         return new Color(height, height, height);
     }
 
-    private Color GetMoistureTexture(int x, int y)
+    private Color GetMoistureMap(int x, int y)
     {
         float height = WorldGenerator.GetMoisture(x, y);
 
